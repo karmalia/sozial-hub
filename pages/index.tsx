@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Feed from '../Components/Feed/Feed';
 import Header from '../Components/Header/Header';
 
 export default function Home() {
@@ -10,6 +11,7 @@ export default function Home() {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <Header />
+      <Feed />
       {/* Header */}
       {/* Feed */}
       {/* Modal */}
