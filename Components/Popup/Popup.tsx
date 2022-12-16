@@ -12,7 +12,6 @@ import { db, storage } from '../../Features/firebase/firebase';
 import media from '../../public/assets/media.png';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 
-import { Event, File } from 'dom';
 import { useAddPostMutation } from '../../Features/firebaseApi';
 import { PostDocument } from '../../Interfaces/interfaces';
 import { selectUserStatus } from '../../Features/userSlice';
@@ -120,7 +119,7 @@ export default function Popup() {
                       name='postImage'
                       className='hidden '
                       type='file'
-                      onChange={(e: Event) => {
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         if (e.target.files && e.target.files[0]) {
                           setFile(e.target.files[0] as File);
                         }
@@ -139,7 +138,7 @@ export default function Popup() {
                       type='text'
                       placeholder='Please enter a caption'
                       value={post.caption}
-                      onChange={(e: Event) =>
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         setPost((prev) => ({
                           ...prev,
                           caption: e.target.value,

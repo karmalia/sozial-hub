@@ -89,7 +89,7 @@ const Post: React.FC<PostDocument> = ({
         </p>
         {/* Comments */}
         <div className='mx-3'>
-          {comments.map(({ username, comment }, index) => {
+          {comments?.map(({ username, comment }, index) => {
             return (
               <div
                 key={index}

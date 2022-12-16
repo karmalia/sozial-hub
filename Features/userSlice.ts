@@ -2,7 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import type { RootState } from './store';
 
-const initialState = {
+interface userState {
+  displayName: string;
+  photoURL: string;
+  status: boolean;
+}
+
+const initialState: userState = {
   displayName: '',
   photoURL: '',
   status: false,

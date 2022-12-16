@@ -27,6 +27,7 @@ type commentDocument = {
 };
 
 export interface PostDocument {
+  id?: string;
   username: string;
   profilePic?: any;
   postPhoto?: any;

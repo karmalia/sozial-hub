@@ -11,12 +11,16 @@ function MiniProfile() {
     <div className='flex justify-between mt-8'>
       <div className='flex items-center'>
         <div className='w-14 h-14 rounded'>
-          <img
-            src={userDetails.photoURL ? userDetails.photoURL : profile}
-            alt='Profile photo'
-            className='rounded-full '
-            referrerPolicy='no-referrer'
-          />
+          {userDetails.photoURL ? (
+            <img
+              src={userDetails.photoURL}
+              alt='Profile photo'
+              className='rounded-full '
+              referrerPolicy='no-referrer'
+            />
+          ) : (
+            <Image src={profile} alt='profile Image' />
+          )}
         </div>
 
         <p className='pl-3 text-sm font-semibold whitespace-nowrap'>

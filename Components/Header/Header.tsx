@@ -81,12 +81,16 @@ export default function Header() {
           </div>
           <div className='flex'>
             <div className={styles.profilePicture}>
-              <img
-                className='rounded-full'
-                src={userDetails.photoURL ? userDetails.photoURL : profile}
-                alt='profile'
-                referrerPolicy='no-referrer'
-              />
+              {userDetails.photoURL ? (
+                <img
+                  className='rounded-full'
+                  src={userDetails.photoURL}
+                  alt='profile'
+                  referrerPolicy='no-referrer'
+                />
+              ) : (
+                <Image className='rounded-full' src={profile} alt='profile' />
+              )}
             </div>
             {userDetails.displayName ? (
               <button
