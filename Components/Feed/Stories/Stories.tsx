@@ -26,7 +26,7 @@ function Stories() {
   return (
     <div>
       <div className='flex space-x-4 bg-white border mx-1 overflow-x-scroll rounded-lg p-5'>
-        {stories?.map((profile) => {
+        {stories?.map((profile, index) => {
           return (
             <Story
               username={profile.username}

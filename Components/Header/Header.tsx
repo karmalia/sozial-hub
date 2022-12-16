@@ -10,8 +10,29 @@ import hearth from '../../public/assets/hearth.png';
 import message from '../../public/assets/message.png';
 import discover from '../../public/assets/discover.png';
 import profile from '../../public/assets/profile.jpg';
+import { app } from '../../Features/firebase/firebase';
+import { getAuth, signOut as googleSignOut } from 'firebase/auth';
+import Link from 'next/link';
+import { selectUserStatus } from '../../Features/userSlice';
+
+import { useAppDispatch, useAppSelector } from '../../Features/hooks';
+import {
+  CHANGE_POPUP_STATE,
+  selectOpenStatus,
+} from '../../Features/uploadSlice';
 
 export default function Header() {
+  const dispatch = useAppDispatch();
+  const auth = getAuth(app);
+
+  const userDetails = useAppSelector(selectUserStatus);
+
+  console.log('userDetails: ', userDetails);
+
+  function signOutHandler() {
+    googleSignOut(auth);
+  }
+
   return (
     <div className={styles.headerContainer}>
       <div className='flex justify-between items-center h-16 max-w-5xl m-auto px-2'>
@@ -46,7 +67,10 @@ export default function Header() {
               1
             </div>
           </div>
-          <div className={styles.uploadButton}>
+          <div
+            className={styles.uploadButton}
+            onClick={() => dispatch(CHANGE_POPUP_STATE(true))}
+          >
             <Image src={upload} alt='upload' />
           </div>
           <div className={styles.navButtons}>
@@ -57,9 +81,25 @@ export default function Header() {
           </div>
           <div className='flex'>
             <div className={styles.profilePicture}>
-              <Image className='rounded-full' src={profile} alt='profile' />
+              <img
+                className='rounded-full'
+                src={userDetails.photoURL ? userDetails.photoURL : profile}
+                alt='profile'
+                referrerPolicy='no-referrer'
+              />
             </div>
-            <button className={styles.loginButton}>Sign out</button>
+            {userDetails.displayName ? (
+              <button
+                onClick={() => signOutHandler()}
+                className={styles.loginButton}
+              >
+                Sign out
+              </button>
+            ) : (
+              <Link href='/auth/signin' className={styles.loginButton}>
+                Log in
+              </Link>
+            )}
           </div>
         </div>
       </div>

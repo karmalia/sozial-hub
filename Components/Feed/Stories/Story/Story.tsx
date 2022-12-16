@@ -2,9 +2,7 @@ import Image from 'next/image';
 import React from 'react';
 import { StoryObject } from '../../../../Interfaces/interfaces';
 
-const Story: React.FC<StoryObject> = ({ avatar, username, key }) => {
-  console.log('Gelen userstory: ', avatar, username, key);
-
+const Story: React.FC<StoryObject> = ({ avatar, username }) => {
   return (
     <div className=''>
       <div className=''>

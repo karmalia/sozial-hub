@@ -1,52 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './Posts.module.scss';
 import profile from '../../../public/assets/profile.jpg';
 import Post from './Post/Post';
 import { PostDocument } from '../../../Interfaces/interfaces';
+import { useGetPostsQuery } from '../../../Features/firebaseApi';
+
 function Posts() {
-  //temporary user post documents: will be replaced by docs from firebase
-  const posts: PostDocument[] = [
-    {
-      id: '123',
-      username: 'Joe Doe',
-      profilePic: profile,
-      postPhoto: profile,
-      caption:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque est nisi, condimentum vitae fringilla a, porta at dolor. Vestibulum non mi leo. Aliquam purus lectus, gravida quis posuere id, aliquam et diam. Aliquam id purus vitae odio ultricies fringilla sed a lorem. Donec fringilla tempor pretium. Curabitur convallis eu magna.',
-      comments: [
-        {
-          username: 'John Doe',
-          comment: 'Hello from the comment section',
-        },
-        {
-          username: 'Marry Doe',
-          comment: 'Hello from the comment section',
-        },
-      ],
-    },
-    {
-      id: '234',
-      username: 'Mike Doe',
-      profilePic: profile,
-      postPhoto: profile,
-      caption:
-        'Second Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque est nisi, condimentum vitae fringilla a, porta at dolor. Vestibulum non mi leo. Aliquam purus lectus, gravida quis posuere id, aliquam et diam. Aliquam id purus vitae odio ultricies fringilla sed a lorem. Donec fringilla tempor pretium. Curabitur convallis eu magna.',
-      comments: [
-        {
-          username: 'John Doe',
-          comment: 'Hello from the comment section',
-        },
-        {
-          username: 'Marry Doe',
-          comment: 'Hello from the comment section',
-        },
-      ],
-    },
-  ];
+  const { data: posts, isError, isFetching } = useGetPostsQuery('all');
+
+  useEffect(() => {
+    if (posts) {
+      console.log('Gelen postslar: ', posts);
+    }
+  }, [isFetching]);
 
   return (
     <div className='mt-1 mx-1'>
-      {posts.map((post) => {
+      {posts?.map((post: PostDocument) => {
         return (
           <Post
             key={post.id}
@@ -56,6 +26,7 @@ function Posts() {
             postPhoto={post.postPhoto}
             caption={post.caption}
             comments={post.comments}
+            timestamp={post.timestamp}
           />
         );
       })}

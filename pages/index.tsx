@@ -1,8 +1,33 @@
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import Feed from '../Components/Feed/Feed';
 import Header from '../Components/Header/Header';
+import Popup from '../Components/Popup/Popup';
+import { useAppDispatch } from '../Features/hooks';
+import { CHANGE_USER_STATE } from '../Features/userSlice';
+import { getAccessToken, fetchUser } from '../Utils/fetchUserDetails';
 
 export default function Home() {
+  const router = useRouter();
+  const auth = getAuth();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const accessToken = getAccessToken();
+    if (!accessToken && !auth.currentUser) {
+      router.push('/auth/signin');
+    } else {
+      const unsub = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          dispatch(CHANGE_USER_STATE(user));
+        }
+      });
+      unsub();
+    }
+  }, []);
+
   return (
     <div>
       <Head>
@@ -15,6 +40,7 @@ export default function Home() {
       {/* Header */}
       {/* Feed */}
       {/* Modal */}
+      <Popup />
     </div>
   );
 }

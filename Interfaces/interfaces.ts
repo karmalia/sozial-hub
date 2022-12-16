@@ -27,10 +27,32 @@ type commentDocument = {
 };
 
 export interface PostDocument {
-  id: string;
   username: string;
   profilePic?: any;
   postPhoto?: any;
   caption: string;
-  comments: commentDocument[];
+  comments?: commentDocument[];
+  timestamp?: any;
 }
+
+//Suggestions
+
+export interface Suggestion {
+  id: string;
+  username: string;
+  profilePhoto: any;
+}
+
+export type suggestionTuble = Suggestion[];
+
+export const SuggestionCreator = (
+  id: string,
+  username: string,
+  profilePhoto: any
+): Suggestion => {
+  return {
+    id,
+    username,
+    profilePhoto,
+  };
+};

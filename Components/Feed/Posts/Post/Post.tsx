@@ -7,6 +7,9 @@ import comment from '../../../../public/assets/comment.png';
 import message from '../../../../public/assets/message.png';
 import save from '../../../../public/assets/save.png';
 import emojy from '../../../../public/assets/emojy.png';
+import { format, parse } from 'date-fns';
+
+import { formatDistance } from 'date-fns';
 
 const Post: React.FC<PostDocument> = ({
   id,
@@ -15,8 +18,15 @@ const Post: React.FC<PostDocument> = ({
   postPhoto,
   caption,
   comments,
+  timestamp,
 }) => {
-  console.log('profilePic:', profilePic);
+  const formattedTimestamp = format(timestamp.toDate(), 'MM/dd/yyyy HH:mm:ss');
+
+  const date = parse(formattedTimestamp, 'MM/dd/yyyy HH:mm:ss', new Date(0));
+
+  const diffInHours = formatDistance(new Date(), date, {
+    includeSeconds: true,
+  });
 
   return (
     <div>
@@ -26,14 +36,14 @@ const Post: React.FC<PostDocument> = ({
           <div className='flex items-center w-full'>
             <div className='h-8 w-8 mr-3'>
               <img
-                src={profilePic.src}
+                src={profilePic}
                 className='rounded-full'
                 alt='profilePhoto'
               />
             </div>
             <div className=''>
               <p className='font-semibold text-sm'>{username}</p>
-              <p className='text-sm'>Original Audio</p>
+              <p className='text-sm'>{diffInHours} ago</p>
             </div>
           </div>
 
@@ -43,7 +53,7 @@ const Post: React.FC<PostDocument> = ({
         </div>
         {/* Photo */}
         <div className=''>
-          <img src={postPhoto.src} alt='Image' />
+          <img src={postPhoto} alt='Image' />
         </div>
 
         {/* Buttons */}
