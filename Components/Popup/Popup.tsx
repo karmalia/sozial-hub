@@ -21,10 +21,9 @@ export default function Popup() {
   const userDetails = useAppSelector(selectUserStatus);
   const [file, setFile] = useState<null | File>(null);
   const [post, setPost] = useState<PostDocument>({
-    id: 'string',
     username: 'string',
 
-    caption: 'string',
+    caption: '',
   });
   const [addPost] = useAddPostMutation();
 
@@ -43,13 +42,12 @@ export default function Popup() {
     dispatch(CHANGE_POPUP_STATE(false));
   }
 
-  const captionRef = useRef({ value: 'Default' });
-
   useEffect(() => {
     async function uploadFile() {
       if (!file) return;
 
       if (userDetails.displayName) {
+        setProgress(true);
         const storageRef = ref(
           storage,
           `postImages/${userDetails?.displayName}/${file.name}`
@@ -57,10 +55,12 @@ export default function Popup() {
 
         const snapshot = await uploadBytesResumable(storageRef, file);
         const downloadURL = await getDownloadURL(snapshot.ref);
+        setProgress(false);
+
         setPost({
           username: userDetails.displayName,
           profilePic: userDetails.photoURL,
-          caption: captionRef.current.value ?? 'Default',
+          caption: '',
           postPhoto: downloadURL,
           comments: [],
         });
@@ -113,7 +113,7 @@ export default function Popup() {
                   <div className='flex items-center w-40 h-40 hover:scale-75 ease-in duration-300 hover:rotate-45 cursor-pointer'>
                     <label
                       htmlFor='postImage'
-                      className='block w-40 h-40 absolute z-10'
+                      className='block w-40 h-40 absolute z-10 cursor-pointer'
                     ></label>
                     <input
                       id='postImage'
@@ -126,15 +126,25 @@ export default function Popup() {
                         }
                       }}
                     />
-                    <Image src={media} alt='Upload image input' />
+                    <Image
+                      className='cursor:pointer'
+                      src={media}
+                      alt='Upload image input'
+                    />
                   </div>
 
                   <div className='mt-2'>
                     <input
-                      className='text-sm outline-0'
+                      className='text-sm outline-0 '
                       type='text'
                       placeholder='Please enter a caption'
-                      ref={captionRef}
+                      value={post.caption}
+                      onChange={(e: Event) =>
+                        setPost((prev) => ({
+                          ...prev,
+                          caption: e.target.value,
+                        }))
+                      }
                       required
                     />
                   </div>
@@ -142,10 +152,11 @@ export default function Popup() {
                   <div className='mt-4'>
                     <button
                       type='button'
-                      className='inline-flex justify-center rounded-md border border-transparent bg-sky-200 px-4 py-2 text-sm font-medium text-dark hover:bg-sky-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
+                      className='inline-flex justify-center rounded-md border border-transparent bg-sky-200 px-4 py-2 text-sm font-medium text-dark hover:bg-sky-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 disabled:bg-slate-100'
                       onClick={() => uploadPost()}
+                      disabled={progress ? true : false}
                     >
-                      Upload Post
+                      {progress ? 'loading' : 'Upload Post'}
                     </button>
                   </div>
                 </Dialog.Panel>

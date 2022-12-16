@@ -14,8 +14,6 @@ import {
   where,
 } from 'firebase/firestore';
 
-import v4 from 'uuid';
-
 import { db, storage } from './firebase/firebase';
 
 const postsCollection = collection(db, 'posts');
@@ -42,22 +40,25 @@ export const firebaseApi = createApi({
           return { data: error };
         }
       },
-      transformResponse: (res) => res.sort((a, b) => b.id - a.id),
+      transformResponse: (res) => res.sort((a, b) => a.timestamp - b.timestamp),
       providesTags: ['posts'],
     }),
     addPost: builder.mutation({
       async queryFn(post) {
-        let customId = v4();
-
+        console.log('Mutasyona gelen post: ', post);
         try {
-          await setDoc(doc(db, 'posts', customId), {
-            id: customId,
+          const docRef = await addDoc(collection(db, 'posts'), {
             ...post,
             timestamp: serverTimestamp(),
           });
 
+          updateDoc(doc(db, 'posts', docRef.id), {
+            id: docRef.id,
+          });
+
           return { data: 'Success!' };
         } catch (error) {
+          console.log('Yüklemede hata: ', error);
           return { data: 'Error' };
         }
       },
