@@ -27,6 +27,8 @@ function Posts() {
             caption={post.caption}
             comments={post.comments}
             timestamp={post.timestamp}
+            likes={post.likes}
+            likedUsers={post.likedUsers}
           />
         );
       })}

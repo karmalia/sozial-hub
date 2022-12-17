@@ -1,15 +1,23 @@
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { PostDocument } from '../../../../Interfaces/interfaces';
 import dots from '../../../../public/assets/dots.png';
 import hearth from '../../../../public/assets/hearth.png';
+import redhearth from '../../../../public/assets/redhearth.png';
 import comment from '../../../../public/assets/comment.png';
 import message from '../../../../public/assets/message.png';
 import save from '../../../../public/assets/save.png';
 import emojy from '../../../../public/assets/emojy.png';
+import profile from '../../../../public/assets/profile.jpg';
 import { format, parse } from 'date-fns';
 
 import { formatDistance } from 'date-fns';
+import { useAppSelector } from '../../../../Features/hooks';
+import { selectUserStatus } from '../../../../Features/userSlice';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../../../Features/firebase/firebase';
+import { useHandleLikeMutation } from '../../../../Features/firebaseApi';
+import { toast } from 'react-toastify';
 
 const Post: React.FC<PostDocument> = ({
   id,
@@ -19,7 +27,17 @@ const Post: React.FC<PostDocument> = ({
   caption,
   comments,
   timestamp,
+  likes,
+  likedUsers,
 }) => {
+  const [hasLiked, setHasLiked] = useState(false);
+  const userDetails = useAppSelector(selectUserStatus);
+
+  useEffect(() => {
+    console.log('Updated!');
+  }, [userDetails]);
+
+  //seperate this as a func
   const formattedTimestamp = format(timestamp.toDate(), 'MM/dd/yyyy HH:mm:ss');
 
   const date = parse(formattedTimestamp, 'MM/dd/yyyy HH:mm:ss', new Date(0));
@@ -28,9 +46,11 @@ const Post: React.FC<PostDocument> = ({
     includeSeconds: true,
   });
 
+  const [handleLike] = useHandleLikeMutation();
+
   return (
-    <div>
-      <div className='border rounded-lg my-3'>
+    <div className=''>
+      <div className='border rounded-lg my-3 bg-white'>
         {/* Header */}
         <div className='flex items-center p-3'>
           <div className='flex items-center w-full'>
@@ -43,7 +63,7 @@ const Post: React.FC<PostDocument> = ({
             </div>
             <div className=''>
               <p className='font-semibold text-sm'>{username}</p>
-              <p className='text-sm'>{diffInHours} ago</p>
+              <p className='text-sm'>Captured by you </p>
             </div>
           </div>
 
@@ -53,7 +73,7 @@ const Post: React.FC<PostDocument> = ({
         </div>
         {/* Photo */}
         <div className=''>
-          <img src={postPhoto} alt='Image' />
+          <img src={postPhoto !== 'null' ? postPhoto : profile} alt='Image' />
         </div>
 
         {/* Buttons */}
@@ -61,7 +81,38 @@ const Post: React.FC<PostDocument> = ({
           <div className='flex justify-between items-center'>
             <div className='flex items-center space-x-3'>
               <div className='w-7'>
-                <Image src={hearth} alt='Add favorite list' />
+                <Image
+                  onClick={() => {
+                    //Decrease the like and remove the user's id from the documents array list.
+
+                    if (userDetails.uid) {
+                      if (!likedUsers?.includes(userDetails.uid)) {
+                        handleLike({
+                          type: 'increase',
+                          USER_ID: userDetails.uid,
+                          docId: id,
+                          likes,
+                          likedUsers,
+                        });
+                      } else {
+                        handleLike({
+                          type: 'decrease',
+                          USER_ID: userDetails.uid,
+                          docId: id,
+                          likes,
+                          likedUsers,
+                        });
+                      }
+                    } else {
+                      toast.error('You have to login to like this post');
+                    }
+                  }}
+                  src={
+                    likedUsers?.includes(userDetails.uid) ? redhearth : hearth
+                  }
+                  alt='Add favorite list'
+                  className='cursor-pointer'
+                />
               </div>
               <div className='w-7'>
                 <Image src={comment} alt='Create a comment' />
@@ -74,7 +125,7 @@ const Post: React.FC<PostDocument> = ({
               <Image src={save} alt='Save this post' />
             </div>
           </div>
-          <div className='mt-2 customfont'>231 Likes</div>
+          <div className='mt-2 customfont'>{likes} Likes</div>
         </div>
 
         {/* Caption */}
@@ -108,7 +159,7 @@ const Post: React.FC<PostDocument> = ({
         </div>
 
         {/* Timestamp */}
-        <p className='text-gray-400 text-xs my-2 mx-3'>4 minutes ago</p>
+        <p className='text-gray-400 text-xs my-2 mx-3'>{diffInHours} ago</p>
         {/* Border */}
         <div className='border-t mx-3 my-2'></div>
         {/* Inputs */}

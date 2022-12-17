@@ -16,21 +16,25 @@ import Link from 'next/link';
 import { selectUserStatus } from '../../Features/userSlice';
 
 import { useAppDispatch, useAppSelector } from '../../Features/hooks';
-import {
-  CHANGE_POPUP_STATE,
-  selectOpenStatus,
-} from '../../Features/uploadSlice';
+import { CHANGE_POPUP_STATE } from '../../Features/uploadSlice';
+import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
 
 export default function Header() {
   const dispatch = useAppDispatch();
   const auth = getAuth(app);
+  const router = useRouter();
 
   const userDetails = useAppSelector(selectUserStatus);
 
   console.log('userDetails: ', userDetails);
 
   function signOutHandler() {
-    googleSignOut(auth);
+    console.log('Sign Out!');
+
+    googleSignOut(auth).then(() => {
+      router.push('/auth/signin');
+    });
   }
 
   return (
@@ -69,7 +73,13 @@ export default function Header() {
           </div>
           <div
             className={styles.uploadButton}
-            onClick={() => dispatch(CHANGE_POPUP_STATE(true))}
+            onClick={() => {
+              if (userDetails.uid) {
+                dispatch(CHANGE_POPUP_STATE(true));
+              } else {
+                toast.error('Please login to upload images!');
+              }
+            }}
           >
             <Image src={upload} alt='upload' />
           </div>

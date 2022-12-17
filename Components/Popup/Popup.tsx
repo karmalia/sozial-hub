@@ -20,8 +20,9 @@ export default function Popup() {
   const userDetails = useAppSelector(selectUserStatus);
   const [file, setFile] = useState<null | File>(null);
   const [post, setPost] = useState<PostDocument>({
+    id: '',
     username: 'string',
-
+    likes: 0,
     caption: '',
   });
   const [addPost] = useAddPostMutation();
@@ -57,11 +58,14 @@ export default function Popup() {
         setProgress(false);
 
         setPost({
+          id: '',
           username: userDetails.displayName,
-          profilePic: userDetails.photoURL,
+          profilePic: userDetails.photoURL ?? 'null',
           caption: '',
           postPhoto: downloadURL,
           comments: [],
+          likes: 0,
+          likedUsers: [],
         });
         console.log('current storage Ref: ', storageRef);
       } else {
@@ -109,7 +113,7 @@ export default function Popup() {
                     Create New Post
                   </Dialog.Title>
 
-                  <div className='flex items-center w-40 h-40 hover:scale-75 ease-in duration-300 hover:rotate-45 cursor-pointer'>
+                  <div className='flex items-center w-40 h-40 hover:scale-75 ease-in duration-300  cursor-pointer'>
                     <label
                       htmlFor='postImage'
                       className='block w-40 h-40 absolute z-10 cursor-pointer'

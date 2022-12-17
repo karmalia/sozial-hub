@@ -6,12 +6,14 @@ interface userState {
   displayName: string;
   photoURL: string;
   status: boolean;
+  uid: string;
 }
 
 const initialState: userState = {
   displayName: '',
   photoURL: '',
   status: false,
+  uid: '',
 };
 
 export const userSlice = createSlice({
@@ -21,7 +23,12 @@ export const userSlice = createSlice({
     CHANGE_USER_STATE: (state, { payload, type }) => {
       console.log('Gelen user Payload', payload);
 
-      return { ...payload };
+      return {
+        displayName: payload.displayName,
+        photoURL: payload.photoURL,
+        status: true,
+        uid: payload.uid,
+      };
     },
   },
 });

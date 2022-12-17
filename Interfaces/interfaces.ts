@@ -27,13 +27,15 @@ type commentDocument = {
 };
 
 export interface PostDocument {
-  id?: string;
+  id: string;
   username: string;
   profilePic?: any;
   postPhoto?: any;
   caption: string;
   comments?: commentDocument[];
   timestamp?: any;
+  likes: number;
+  likedUsers: string[];
 }
 
 //Suggestions
@@ -56,4 +58,14 @@ export const SuggestionCreator = (
     username,
     profilePhoto,
   };
+};
+
+///login - signup objects
+
+export type TformValues = {
+  fullname: string;
+
+  email: string;
+  password: string;
+  passwordConfirm?: string;
 };
