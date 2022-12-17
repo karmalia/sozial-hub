@@ -15,31 +15,41 @@ import {
   where,
 } from 'firebase/firestore';
 
+type CustomErrorType = { reason: 'Could not fetched' | 'too hot' };
+
 import { db, storage } from './firebase/firebase';
 
 const postsCollection = collection(db, 'posts');
 const q = query(postsCollection, orderBy('timestamp', 'desc'));
+import { PostDocument, TPosts } from '../Interfaces/interfaces';
 
 export const firebaseApi = createApi({
   reducerPath: 'firebaseApi',
-  baseQuery: fakeBaseQuery(),
+  baseQuery: fakeBaseQuery<CustomErrorType>(),
   tagTypes: ['posts'],
   endpoints: (builder) => ({
-    getPosts: builder.query({
-      async queryFn() {
+    getPosts: builder.query<TPosts, void>({
+      async queryFn(arg) {
         try {
           const querySnapshot = await getDocs(q);
-          let postData = [];
+          let postData: TPosts = [];
 
           querySnapshot?.forEach((doc) => {
             postData.push({
               id: doc.id,
-              ...doc.data(),
+              caption: doc.data().caption,
+              comments: doc.data().comments,
+              username: doc.data().username,
+              likedUsers: doc.data().likedUsers,
+              likes: doc.data().likes,
+              timestamp: doc.data().timestamp,
+              postPhoto: doc.data().postPhoto,
+              profilePic: doc.data().postPhoto,
             });
           });
           return { data: postData };
         } catch (error) {
-          return { data: error };
+          return { error: { reason: 'Could not fetched' } };
         }
       },
 
@@ -77,7 +87,9 @@ export const firebaseApi = createApi({
           if (type === 'decrease') {
             updateDoc(postRef, {
               likes: (likes -= 1),
-              likedUsers: [...likedUsers.filter((id) => id !== USER_ID)],
+              likedUsers: [
+                ...likedUsers.filter((id: string) => id !== USER_ID),
+              ],
             });
           }
 

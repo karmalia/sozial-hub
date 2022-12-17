@@ -24,6 +24,7 @@ export default function Popup() {
     username: 'string',
     likes: 0,
     caption: '',
+    likedUsers: [],
   });
   const [addPost] = useAddPostMutation();
 

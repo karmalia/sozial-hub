@@ -2,21 +2,21 @@ import React, { useEffect, useState } from 'react';
 import styles from './Posts.module.scss';
 import profile from '../../../public/assets/profile.jpg';
 import Post from './Post/Post';
-import { PostDocument } from '../../../Interfaces/interfaces';
+import { PostDocument, TPosts } from '../../../Interfaces/interfaces';
 import { useGetPostsQuery } from '../../../Features/firebaseApi';
 
 function Posts() {
-  const { data: posts, isError, isFetching } = useGetPostsQuery('all');
+  const { data, isError, isFetching } = useGetPostsQuery();
 
   useEffect(() => {
-    if (posts) {
-      console.log('Gelen postslar: ', posts);
+    if (data) {
+      console.log('Gelen postslar: ', data);
     }
   }, [isFetching]);
 
   return (
     <div className='mt-1 mx-1'>
-      {posts?.map((post: PostDocument) => {
+      {data?.map((post: PostDocument) => {
         return (
           <Post
             key={post.id}

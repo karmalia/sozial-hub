@@ -38,6 +38,8 @@ export interface PostDocument {
   likedUsers: string[];
 }
 
+export type TPosts = PostDocument[];
+
 //Suggestions
 
 export interface Suggestion {

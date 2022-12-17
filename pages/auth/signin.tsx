@@ -195,7 +195,9 @@ export default function SignIn() {
             </svg>
           </div>
           <button
-            onClick={(event: React.MouseEventHandler<HTMLButtonElement>) => {
+            onClick={(
+              event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+            ) => {
               console.log('Clicked');
               event.preventDefault();
               signInWithPopup(Firebase_Auth, Firebase_Provider)

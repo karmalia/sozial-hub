@@ -38,7 +38,7 @@ export async function handleLogin(auth: any, formDocument: TformValues) {
     if (result) {
       return 'Success';
     }
-  } catch (error) {
+  } catch (error: any) {
     const regex: RegExp = /\(([^)]+)\)/;
     const match: RegExpMatchArray | null = error?.message?.match(regex);
     console.log(error?.message);
