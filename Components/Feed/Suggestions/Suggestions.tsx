@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import React, { useEffect, useState } from 'react';
-
+import styles from './Suggestions.module.scss';
 import {
   suggestionTuble,
   SuggestionCreator,
@@ -21,14 +21,16 @@ function Suggestions() {
   }, []);
 
   return (
-    <div className=''>
-      <div className='flex justify-between items-center bg-white px-4'>
+    <div className={styles.container}>
+      {/* Head */}
+      <div className={styles.head}>
         <p className={`text-gray-500 text-bold text-sm  my-2`}>
           Suggestions for you
         </p>
         <button className='text-sm'>See All</button>
       </div>
-      <div className='rounded-bl-lg rounded-br-lg border'>
+      {/* Intersection */}
+      <div className={styles.intersection}>
         {suggestionList.map((profile) => {
           return (
             <div
@@ -56,7 +58,8 @@ function Suggestions() {
           );
         })}
       </div>
-      <div className='flex flex-wrap space-x-2 mt-2 justify-center items-center text-white'>
+      {/* Body */}
+      <div className={styles.body}>
         <p>About</p>
         <span>&#183;</span>
         <p>Help</p>
@@ -75,8 +78,8 @@ function Suggestions() {
         <span>&#183;</span>
         <p>Language</p>
       </div>
-
-      <div className='text-xs mt-6 text-semibold text-gray-400 text-center'>
+      {/* Footer */}
+      <div className={styles.footer}>
         <p>© 2022 derived from Instagram</p>
       </div>
     </div>

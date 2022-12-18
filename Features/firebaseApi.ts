@@ -2,6 +2,7 @@ import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import {
   addDoc,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -44,7 +45,7 @@ export const firebaseApi = createApi({
               likes: doc.data().likes,
               timestamp: doc.data().timestamp,
               postPhoto: doc.data().postPhoto,
-              profilePic: doc.data().postPhoto,
+              profilePic: doc.data().profilePic,
             });
           });
           return { data: postData };
@@ -57,6 +58,8 @@ export const firebaseApi = createApi({
     }),
     addPost: builder.mutation({
       async queryFn(post) {
+        console.log('Yüklenecek post', post);
+
         try {
           const docRef = await addDoc(collection(db, 'posts'), {
             ...post,
@@ -97,7 +100,7 @@ export const firebaseApi = createApi({
           if (type === 'increase') {
             updateDoc(postRef, {
               likes: (likes += 1),
-              likedUsers: [...likedUsers, USER_ID],
+              likedUsers: arrayUnion(USER_ID),
             });
           }
 
@@ -114,7 +117,12 @@ export const firebaseApi = createApi({
         try {
           //takes posts id and comment to add
 
-          return { data: 'Success!' };
+          const postRef = doc(db, 'posts', id);
+          const result = await updateDoc(postRef, {
+            comments: arrayUnion(comment),
+          });
+
+          return { data: 'result' };
         } catch (error) {
           console.log('Something went wrong: ', error);
           return { data: 'Error' };
@@ -125,5 +133,9 @@ export const firebaseApi = createApi({
   }),
 });
 
-export const { useGetPostsQuery, useAddPostMutation, useHandleLikeMutation } =
-  firebaseApi;
+export const {
+  useGetPostsQuery,
+  useAddPostMutation,
+  useHandleLikeMutation,
+  useAddCommentMutation,
+} = firebaseApi;

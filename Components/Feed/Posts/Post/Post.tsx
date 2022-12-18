@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { PostDocument } from '../../../../Interfaces/interfaces';
 import dots from '../../../../public/assets/dots.png';
 import hearth from '../../../../public/assets/hearth.png';
@@ -16,8 +16,12 @@ import { useAppSelector } from '../../../../Features/hooks';
 import { selectUserStatus } from '../../../../Features/userSlice';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../../Features/firebase/firebase';
-import { useHandleLikeMutation } from '../../../../Features/firebaseApi';
+import {
+  useHandleLikeMutation,
+  useAddCommentMutation,
+} from '../../../../Features/firebaseApi';
 import { toast } from 'react-toastify';
+import { idText } from 'typescript';
 
 const Post: React.FC<PostDocument> = ({
   id,
@@ -30,12 +34,14 @@ const Post: React.FC<PostDocument> = ({
   likes,
   likedUsers,
 }) => {
-  const [hasLiked, setHasLiked] = useState(false);
   const userDetails = useAppSelector(selectUserStatus);
+  const [hasLiked, setHasLiked] = useState<Boolean>(false);
 
   useEffect(() => {
-    console.log('Updated!');
-  }, [userDetails]);
+    setHasLiked(likedUsers?.includes(userDetails.uid));
+  }, [likes]);
+
+  const commentRef = useRef<HTMLInputElement>(null);
 
   //seperate this as a func
   const formattedTimestamp = format(timestamp.toDate(), 'MM/dd/yyyy HH:mm:ss');
@@ -47,17 +53,17 @@ const Post: React.FC<PostDocument> = ({
   });
 
   const [handleLike] = useHandleLikeMutation();
-
+  const [addComment] = useAddCommentMutation();
   return (
     <div className=''>
       <div className='border rounded-lg my-3 bg-white'>
         {/* Header */}
         <div className='flex items-center p-3'>
           <div className='flex items-center w-full'>
-            <div className='h-8 w-8 mr-3'>
+            <div className='h-10 w-10 mr-3'>
               <img
                 src={profilePic}
-                className='rounded-full'
+                className='rounded-full border h-10 w-10'
                 alt='profilePhoto'
               />
             </div>
@@ -72,8 +78,13 @@ const Post: React.FC<PostDocument> = ({
           </div>
         </div>
         {/* Photo */}
-        <div className=''>
-          <img src={postPhoto !== 'null' ? postPhoto : profile} alt='Image' />
+        <div className='h-[30rem]'>
+          <img
+            src={postPhoto !== 'null' ? postPhoto : profile}
+            alt='Image'
+            className='
+            h-full w-full object-cover'
+          />
         </div>
 
         {/* Buttons */}
@@ -85,31 +96,25 @@ const Post: React.FC<PostDocument> = ({
                   onClick={() => {
                     //Decrease the like and remove the user's id from the documents array list.
 
-                    if (userDetails.uid) {
-                      if (!likedUsers?.includes(userDetails.uid)) {
-                        handleLike({
-                          type: 'increase',
-                          USER_ID: userDetails.uid,
-                          docId: id,
-                          likes,
-                          likedUsers,
-                        });
-                      } else {
-                        handleLike({
-                          type: 'decrease',
-                          USER_ID: userDetails.uid,
-                          docId: id,
-                          likes,
-                          likedUsers,
-                        });
-                      }
+                    if (!hasLiked) {
+                      handleLike({
+                        type: 'increase',
+                        USER_ID: userDetails.uid,
+                        docId: id,
+                        likes,
+                        likedUsers,
+                      });
                     } else {
-                      toast.error('You have to login to like this post');
+                      handleLike({
+                        type: 'decrease',
+                        USER_ID: userDetails.uid,
+                        docId: id,
+                        likes,
+                        likedUsers,
+                      });
                     }
                   }}
-                  src={
-                    likedUsers?.includes(userDetails.uid) ? redhearth : hearth
-                  }
+                  src={hasLiked ? redhearth : hearth}
                   alt='Add favorite list'
                   className='cursor-pointer'
                 />
@@ -166,9 +171,15 @@ const Post: React.FC<PostDocument> = ({
         <div className='flex justify-between items-center m-3'>
           <div className='flex space-x-2'>
             <div className=''>
-              <Image className='w-7 h-7' src={emojy} alt='Add Emoji' />
+              <Image
+                className='w-7 h-7'
+                src={emojy}
+                alt='Add Emoji'
+                width={10}
+              />
             </div>
             <input
+              ref={commentRef}
               type='text'
               name='comment'
               id='comment'
@@ -176,7 +187,23 @@ const Post: React.FC<PostDocument> = ({
               className='border pl-2 w-full outline-0'
             />
           </div>
-          <button className='h-full w-10 font-semibold text-blue-500 text-sm'>
+          <button
+            className='h-full w-10 font-semibold text-blue-500 text-sm'
+            onClick={() => {
+              const commentValue =
+                commentRef && commentRef.current
+                  ? commentRef.current.value
+                  : '';
+
+              addComment({
+                id: id,
+                comment: {
+                  username: userDetails.displayName ?? 'Guest',
+                  comment: commentValue,
+                },
+              });
+            }}
+          >
             Post
           </button>
         </div>

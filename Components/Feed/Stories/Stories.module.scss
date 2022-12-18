@@ -24,4 +24,6 @@
     background: #555;
     cursor: pointer;
   }
+
+  @apply flex space-x-4 bg-white border mx-1 overflow-x-scroll rounded-lg p-5 mt-8;
 }

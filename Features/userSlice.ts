@@ -1,17 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
+import { userState } from '../Interfaces/interfaces';
 import type { RootState } from './store';
-
-interface userState {
-  displayName: string;
-  photoURL: string;
-  status: boolean;
-  uid: string;
-}
 
 const initialState: userState = {
   displayName: '',
   photoURL: '',
+  email: '',
   status: false,
   uid: '',
 };
@@ -26,6 +20,7 @@ export const userSlice = createSlice({
       return {
         displayName: payload.displayName,
         photoURL: payload.photoURL,
+        email: payload.email,
         status: true,
         uid: payload.uid,
       };

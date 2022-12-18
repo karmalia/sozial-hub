@@ -1,0 +1,19 @@
+.container {
+}
+
+.head {
+  @apply flex justify-between items-center bg-white px-4;
+}
+
+.intersection {
+  @apply rounded-bl-lg rounded-br-lg border;
+}
+
+.body {
+  @apply flex flex-wrap space-x-2 mt-2 justify-center items-center text-white;
+}
+
+.footer {
+  @apply text-xs mt-6 text-gray-400 text-center;
+  @layer text-semibold;
+}

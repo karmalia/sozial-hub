@@ -71,3 +71,27 @@ export type TformValues = {
   password: string;
   passwordConfirm?: string;
 };
+
+///USER
+
+export interface userState {
+  displayName: string;
+  photoURL: string;
+  email: string;
+  status: boolean;
+  uid: string;
+}
+
+export function RandomUserCreator(
+  displayName: string,
+  fakeImage: string,
+  uid: string
+): userState {
+  return {
+    displayName: displayName,
+    uid: uid,
+    email: 'guest',
+    photoURL: fakeImage,
+    status: true,
+  };
+}

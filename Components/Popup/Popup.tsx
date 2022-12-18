@@ -18,6 +18,9 @@ import { selectUserStatus } from '../../Features/userSlice';
 export default function Popup() {
   let currentPopupStatus = useAppSelector(selectOpenStatus);
   const userDetails = useAppSelector(selectUserStatus);
+
+  const [postImageUrl, setPostImageUrl] = useState('');
+
   const [file, setFile] = useState<null | File>(null);
   const [post, setPost] = useState<PostDocument>({
     id: '',
@@ -37,8 +40,6 @@ export default function Popup() {
   }
 
   function uploadPost() {
-    console.log('Yollanan post: ', post);
-
     addPost(post);
     dispatch(CHANGE_POPUP_STATE(false));
   }
@@ -56,19 +57,19 @@ export default function Popup() {
 
         const snapshot = await uploadBytesResumable(storageRef, file);
         const downloadURL = await getDownloadURL(snapshot.ref);
+        setPostImageUrl(downloadURL);
         setProgress(false);
 
-        setPost({
+        setPost((prev) => ({
           id: '',
           username: userDetails.displayName,
-          profilePic: userDetails.photoURL ?? 'null',
-          caption: '',
+          profilePic: userDetails.photoURL,
+          caption: prev.caption,
           postPhoto: downloadURL,
           comments: [],
           likes: 0,
           likedUsers: [],
-        });
-        console.log('current storage Ref: ', storageRef);
+        }));
       } else {
         alert('you have to login first');
       }
@@ -115,26 +116,38 @@ export default function Popup() {
                   </Dialog.Title>
 
                   <div className='flex items-center w-40 h-40 hover:scale-75 ease-in duration-300  cursor-pointer'>
-                    <label
-                      htmlFor='postImage'
-                      className='block w-40 h-40 absolute z-10 cursor-pointer'
-                    ></label>
-                    <input
-                      id='postImage'
-                      name='postImage'
-                      className='hidden '
-                      type='file'
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        if (e.target.files && e.target.files[0]) {
-                          setFile(e.target.files[0] as File);
-                        }
-                      }}
-                    />
-                    <Image
-                      className='cursor:pointer'
-                      src={media}
-                      alt='Upload image input'
-                    />
+                    {postImageUrl ? (
+                      <img
+                        src={postImageUrl}
+                        alt='Post photo'
+                        className='object-cover'
+                      />
+                    ) : (
+                      <>
+                        <label
+                          htmlFor='postImage'
+                          className='block w-40 h-40 absolute z-10 cursor-pointer'
+                        ></label>
+                        <input
+                          id='postImage'
+                          name='postImage'
+                          className='hidden '
+                          type='file'
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            if (e.target.files && e.target.files[0]) {
+                              setFile(e.target.files[0] as File);
+                            }
+                          }}
+                        />
+                        <Image
+                          className='cursor:pointer'
+                          src={media}
+                          alt='Upload image input'
+                        />
+                      </>
+                    )}
                   </div>
 
                   <div className='mt-2'>
