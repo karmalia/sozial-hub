@@ -2,7 +2,7 @@ import styles from './Header.module.scss';
 
 import React from 'react';
 import Image from 'next/image';
-import arrowdown from '../../public/assets/arrowdown.png';
+
 import search from '../../public/assets/search.png';
 import home from '../../public/assets/home.png';
 import upload from '../../public/assets/upload.png';
@@ -43,9 +43,6 @@ export default function Header() {
         {/* Left */}
         <div className={styles.leftSide}>
           <h1 className={styles.logo}>SozialHub</h1>
-          <div className={styles.arrowDown}>
-            <Image src={arrowdown} alt='arrow down' />
-          </div>
         </div>
 
         {/* Middle */}
