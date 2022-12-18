@@ -26,7 +26,7 @@ export default function SignIn() {
 
   return (
     <div className='bg-gradient-to-r from-purple-800 via-blue-700 to-sky-600 h-screen flex justify-center items-center'>
-      <form className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/4'>
+      <form className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'>
         {formState === 'regist' && (
           <div className='mb-4'>
             <label
@@ -117,29 +117,41 @@ export default function SignIn() {
         )}
 
         {formState === 'login' && (
-          <div className='flex items-center justify-center space-x-6'>
+          <div className='flex flex-col items-center  '>
+            <div className='flex space-x-4 justify-center w-full'>
+              <button
+                className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                type='submit'
+                onClick={async (e) => {
+                  e.preventDefault();
+                  const result = await handleLogin(Firebase_Auth, formValues);
+                  if (result === 'Success') {
+                    router.push('/');
+                  } else {
+                    alert('Something went wrong!');
+                  }
+                }}
+              >
+                Login
+              </button>
+              <button
+                className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                type='submit'
+                onClick={async (e) => {
+                  e.preventDefault();
+                  router.push('/');
+                }}
+              >
+                I&rsquo;m a Guest
+              </button>
+            </div>
             <a
-              className='inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800'
+              className='inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 mt-4'
               href='#'
               onClick={() => setFormState('regist')}
             >
               Don&apos;t you have an account?
             </a>
-            <button
-              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-              type='submit'
-              onClick={async (e) => {
-                e.preventDefault();
-                const result = await handleLogin(Firebase_Auth, formValues);
-                if (result === 'Success') {
-                  router.push('/');
-                } else {
-                  alert('Something went wrong!');
-                }
-              }}
-            >
-              Login
-            </button>
           </div>
         )}
 

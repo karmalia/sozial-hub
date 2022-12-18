@@ -17,28 +17,23 @@ export default function Home() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const accessToken = getAccessToken();
-    if (!accessToken && !auth.currentUser) {
-      router.push('/auth/signin');
-    } else {
-      const unsub = onAuthStateChanged(auth, (user) => {
-        if (user) {
-          dispatch(CHANGE_USER_STATE(user));
-        }
-        if (!user) {
-          const randomUserName = 'Guest' + Math.random() * 1_000;
-          const randomId = `${Math.floor(Math.random() * 1_000_000)}`;
-          const fakeImageUrl = faker.image.avatar();
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        dispatch(CHANGE_USER_STATE(user));
+      }
+      if (!user) {
+        const randomUserName = 'Guest' + Math.random() * 1_000;
+        const randomId = `${Math.floor(Math.random() * 1_000_000)}`;
+        const fakeImageUrl = faker.image.avatar();
 
-          dispatch(
-            CHANGE_USER_STATE(
-              RandomUserCreator(randomUserName, fakeImageUrl, randomId)
-            )
-          );
-        }
-      });
-      unsub();
-    }
+        dispatch(
+          CHANGE_USER_STATE(
+            RandomUserCreator(randomUserName, fakeImageUrl, randomId)
+          )
+        );
+      }
+    });
+    unsub();
   }, []);
 
   return (
@@ -50,8 +45,7 @@ export default function Home() {
       </Head>
       <Header />
       <Feed />
-      {/* Header */}
-      {/* Feed */}
+
       {/* Modal */}
       <Popup />
     </div>

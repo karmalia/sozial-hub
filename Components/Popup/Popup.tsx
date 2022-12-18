@@ -120,7 +120,7 @@ export default function Popup() {
                       <img
                         src={postImageUrl}
                         alt='Post photo'
-                        className='object-cover'
+                        className='object-cover w-40 h-40'
                       />
                     ) : (
                       <>
