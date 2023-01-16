@@ -23,8 +23,8 @@ export default function Popup() {
 
   const [file, setFile] = useState<null | File>(null);
   const [post, setPost] = useState<PostDocument>({
-    id: '',
-    username: 'string',
+    id: userDetails.uid,
+    username: userDetails.displayName,
     likes: 0,
     caption: '',
     likedUsers: [],
@@ -170,7 +170,13 @@ export default function Popup() {
                     <button
                       type='button'
                       className='inline-flex justify-center rounded-md border border-transparent bg-sky-200 px-4 py-2 text-sm font-medium text-dark hover:bg-sky-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 disabled:bg-slate-100'
-                      onClick={() => uploadPost()}
+                      onClick={() => {
+                        if (file) {
+                          uploadPost();
+                        } else {
+                          alert('There is no file!');
+                        }
+                      }}
                       disabled={progress ? true : false}
                     >
                       {progress ? 'loading' : 'Upload Post'}
